@@ -3,59 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Waste Management Map</title>
+    <title>Smart Waste Management</title>
+    
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     <style>
-        #map { height: 500px; width: 100%; }
+        body { font-family: Arial, sans-serif; }
+        #map { height: 500px; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <h2>Smart Waste Management Dashboard</h2>
+    <h2>Smart Waste Management Map</h2>
     <div id="map"></div>
-    <p id="status"></p>
+    <p id="status">Loading...</p>
 
     <script>
-        // Initialize Map
-        var map = L.map('map').setView([21.2514, 81.6296], 14); // Default center (Raipur)
-        
-        // Add OpenStreetMap Layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize Map
+            var map = L.map('map').setView([21.2514, 81.6296], 14);
 
-        // Marker Placeholder
-        var binMarker = L.marker([21.2514, 81.6296]).addTo(map).bindPopup("Loading...");
+            // Add OpenStreetMap Layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
 
-        // Function to Fetch Data from ThingSpeak
-        function fetchThingSpeakData() {
-            fetch('https://api.thingspeak.com/channels/2832905/fields/1.json?results=1')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.feeds.length > 0) {
-                        let latestData = data.feeds[0];
-                        let fillLevel = parseFloat(latestData.field1);  // Bin Fill Percentage
-                        
-                        // Fake Coordinates for Testing (Replace with real ones if available)
-                        let binLat = 21.2514 + (Math.random() * 0.01); 
-                        let binLng = 81.6296 + (Math.random() * 0.01);
+            // Force Map to Render Properly
+            setTimeout(() => { map.invalidateSize(); }, 1000);
 
-                        // Update Marker Position
-                        binMarker.setLatLng([binLat, binLng])
-                            .bindPopup(`Bin Fill Level: ${fillLevel.toFixed(2)}%`)
-                            .openPopup();
+            // Marker Placeholder
+            var binMarker = L.marker([21.2514, 81.6296]).addTo(map).bindPopup("Loading...");
 
-                        // Update Status
-                        document.getElementById("status").innerText = `Latest Bin Level: ${fillLevel.toFixed(2)}%`;
-                    }
-                })
-                .catch(error => console.error("Error fetching data:", error));
-        }
+            // Function to Fetch Data from ThingSpeak
+            function fetchThingSpeakData() {
+                fetch('https://api.thingspeak.com/channels/2832905/fields/1.json?results=1')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.feeds.length > 0) {
+                            let latestData = data.feeds[0];
+                            let fillLevel = parseFloat(latestData.field1);  // Bin Fill Percentage
+                            
+                            // Fake Coordinates for Testing
+                            let binLat = 21.2514 + (Math.random() * 0.005);
+                            let binLng = 81.6296 + (Math.random() * 0.005);
 
-        // Call Function Every 15 Seconds
-        fetchThingSpeakData();
-        setInterval(fetchThingSpeakData, 15000);
+                            // Update Marker Position
+                            binMarker.setLatLng([binLat, binLng])
+                                .bindPopup(`Bin Fill Level: ${fillLevel.toFixed(2)}%`)
+                                .openPopup();
+
+                            // Update Status
+                            document.getElementById("status").innerText = `Latest Bin Level: ${fillLevel.toFixed(2)}%`;
+                        }
+                    })
+                    .catch(error => console.error("Error fetching data:", error));
+            }
+
+            // Call Function Every 15 Seconds
+            fetchThingSpeakData();
+            setInterval(fetchThingSpeakData, 15000);
+        });
     </script>
 
 </body>
