@@ -33,8 +33,24 @@
             // Force Map to Render Properly
             setTimeout(() => { map.invalidateSize(); }, 1000);
 
+            // Icons for different fill levels
+            var greenBinIcon = L.icon({
+                iconUrl: 'green_bin.jpg',
+                iconSize: [32, 32]
+            });
+
+            var yellowBinIcon = L.icon({
+                iconUrl: 'yellow_dustbin.jpg',
+                iconSize: [32, 32]
+            });
+
+            var redBinIcon = L.icon({
+                iconUrl: 'red_dustbin.jpg',
+                iconSize: [32, 32]
+            });
+
             // Marker Placeholder
-            var binMarker = L.marker([21.2514, 81.6296]).addTo(map).bindPopup("Loading...");
+            var binMarker = L.marker([21.2514, 81.6296], { icon: greenBinIcon }).addTo(map).bindPopup("Loading...");
 
             // Function to Fetch Data from ThingSpeak
             function fetchThingSpeakData() {
@@ -49,8 +65,17 @@
                             let binLat = 21.2514 + (Math.random() * 0.005);
                             let binLng = 81.6296 + (Math.random() * 0.005);
 
-                            // Update Marker Position
+                            // Determine Icon Based on Fill Level
+                            let selectedIcon = greenBinIcon;  // Default Green
+                            if (fillLevel >= 45 && fillLevel <= 74) {
+                                selectedIcon = yellowBinIcon;  // Yellow
+                            } else if (fillLevel >= 75) {
+                                selectedIcon = redBinIcon;  // Red
+                            }
+
+                            // Update Marker Position & Icon
                             binMarker.setLatLng([binLat, binLng])
+                                .setIcon(selectedIcon)
                                 .bindPopup(`Bin Fill Level: ${fillLevel.toFixed(2)}%`)
                                 .openPopup();
 
