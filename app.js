@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             // Determine Icon Based on Fill Level
                             let selectedIcon;
-                            if (fillLevel >=75) {
+                            if (fillLevel >= 75) {
                                 selectedIcon = redBinIcon;  // Red
                             } else if (fillLevel >= 45 && fillLevel < 75) {
                                 selectedIcon = yellowBinIcon;  // Yellow
