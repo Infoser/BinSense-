@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dustbin Alerts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #alertList {
+            list-style: none;
+            padding: 0;
+            max-width: 600px;
+            margin: auto;
+        }
+        .alert-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .status {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .full { color: red; }
+        .near-full { color: orange; }
+        .normal { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Dustbin Alerts</h1>
+    <ul id="alertList"></ul>
+
+    <script>
+        // Function to populate the alert list dynamically
+        function populateAlertList(dustbins) {
+            const alertList = document.getElementById("alertList");
+
+            if (!alertList) {
+                console.error("Error: alertList element not found!");
+                return;
+            }
+
+            // Clear existing alerts
+            alertList.innerHTML = "";
+
+            dustbins.forEach((dustbin, index) => {
+                const listItem = document.createElement("li");
+                listItem.className = "alert-item";
+                listItem.innerHTML = `
+                    <h3>Dustbin ${index + 1}</h3>
+                    <p><strong>Latitude:</strong> ${dustbin.lat}</p>
+                    <p><strong>Longitude:</strong> ${dustbin.lng}</p>
+                    <p><strong>Fill Level:</strong> ${dustbin.fillLevel}%</p>
+                    <p><strong>Status:</strong> <span class="status ${dustbin.status.toLowerCase().replace(" ", "-")}">${dustbin.status}</span></p>
+                `;
+                alertList.appendChild(listItem);
+            });
+        }
+
+        // Function to fetch real-time data from logic.js
+        function fetchDustbinData() {
+            fetch('https://api.thingspeak.com/channels/2832905/fields/1.json?results=1')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.feeds || data.feeds.length === 0) {
+                        console.error("No data received from ThingSpeak!");
+                        return;
+                    }
+
+                    let latestData = data.feeds[0];
+                    let fillLevel = parseFloat(latestData.field1);
+                    let binLat = 21.2514;
+                    let binLng = 81.6296;
+                    let status = fillLevel >= 75 ? "Full" : fillLevel >= 45 ? "Near Full" : "Normal";
+
+                    // Create dustbin object
+                    let dustbinData = [{
+                        lat: binLat,
+                        lng: binLng,
+                        fillLevel: fillLevel,
+                        status: status
+                    }];
+
+                    // Update the alert list
+                    populateAlertList(dustbinData);
+                })
+                .catch(error => console.error("Error fetching dustbin data:", error));
+        }
+
+        // Fetch data every 15 seconds
+        fetchDustbinData();
+        setInterval(fetchDustbinData, 15000);
+    </script>
+</body>
+</html>
