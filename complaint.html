@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bin Complaint Form</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #statusMessage {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Bin Complaint Form</h2>
+        <form id="complaintForm">
+            <label for="sensorId">Sensor ID:</label>
+            <input type="text" id="sensorId" name="sensorId" placeholder="Enter Sensor ID" required>
+
+            <label for="userName">Your Name:</label>
+            <input type="text" id="userName" name="userName" placeholder="Enter Your Name" required>
+
+            <label for="userContact">Contact Number:</label>
+            <input type="tel" id="userContact" name="userContact" placeholder="Enter Your Contact Number" required>
+
+            <label for="userEmail">Email:</label>
+            <input type="email" id="userEmail" name="userEmail" placeholder="Enter Your Email" required>
+
+            <label for="complaintDetail">Complaint Details:</label>
+            <textarea id="complaintDetail" name="complaintDetail" placeholder="Describe the issue..." required></textarea>
+
+            <button type="submit">Submit Complaint</button>
+        </form>
+        <p id="statusMessage"></p>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgiHDmY0tRR4A5Jdsoex5Zw0bKwdNFvWQ",
+            authDomain: "yash-76d01.firebaseapp.com",
+            databaseURL: "https://yash-76d01-default-rtdb.firebaseio.com",
+            projectId: "yash-76d01",
+            storageBucket: "yash-76d01.firebasestorage.app",
+            messagingSenderId: "336904901354",
+            appId: "1:336904901354:web:1af032f062ce78adf03d93"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let sensorId = getQueryParam("sensorId");
+            if (sensorId) {
+                document.getElementById("sensorId").value = sensorId;
+            }
+        });
+
+        document.getElementById("complaintForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let sensorId = document.getElementById("sensorId").value.trim();
+            let userName = document.getElementById("userName").value.trim();
+            let userContact = document.getElementById("userContact").value.trim();
+            let userEmail = document.getElementById("userEmail").value.trim();
+            let complaintDetail = document.getElementById("complaintDetail").value.trim();
+
+            if (sensorId === "" || userName === "" || userContact === "" || userEmail === "" || complaintDetail === "") {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            let complaintsRef = database.ref("complaints").push();
+            complaintsRef.set({
+                sensorId: sensorId,
+                userName: userName,
+                userContact: userContact,
+                userEmail: userEmail,
+                complaintDetail: complaintDetail,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                document.getElementById("statusMessage").textContent = "Complaint Submitted Successfully!";
+                document.getElementById("complaintForm").reset();
+            }).catch(error => {
+                console.error("Error submitting complaint:", error);
+                document.getElementById("statusMessage").textContent = "Error submitting complaint!";
+            });
+        });
+    </script>
+</body>
+</html>
