@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Icons for different fill levels
             var greenBinIcon = L.icon({ iconUrl: 'green dustbin.png', iconSize: [32, 32] });
             var yellowBinIcon = L.icon({ iconUrl: 'yellow dustbin.png', iconSize: [32, 32] });
-            var redBinIcon = L.icon({ iconUrl: '', iconSize: [32, 32] });
+            var redBinIcon = L.icon({ iconUrl: 'red dustbin.png', iconSize: [32, 32] });
 
             // Placeholder for marker (starts empty)
             var binMarker = null;
