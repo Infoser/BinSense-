@@ -9,6 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Force Map to Render Properly
     setTimeout(() => { map.invalidateSize(); }, 1000);
+
+	 // Icons for different fill levels
+    var greenBinIcon = L.icon({ iconUrl: 'green dustbin.png', iconSize: [32, 32] });
+    var yellowBinIcon = L.icon({ iconUrl: 'yellow dustbin.png', iconSize: [32, 32] });
+    var redBinIcon = L.icon({ iconUrl: 'red dustbin.png', iconSize: [32, 32] });
+
+    // Placeholder for marker (starts empty)
+    var binMarker = null;
 const EMAILJS_SERVICE_ID = "service_vyzzy0q";  // Replace with your Service ID
 const EMAILJS_TEMPLATE_ID = "template_b3dacbs";  // Replace with your Template ID
 const EMAILJS_PUBLIC_KEY = "mXkZpR3syO0qWljnV";  // Replace with your Public Key
@@ -35,13 +43,7 @@ let userName = "Senior Manager";
 
 }
 
-    // Icons for different fill levels
-    var greenBinIcon = L.icon({ iconUrl: 'green dustbin.png', iconSize: [32, 32] });
-    var yellowBinIcon = L.icon({ iconUrl: 'yellow dustbin.png', iconSize: [32, 32] });
-    var redBinIcon = L.icon({ iconUrl: 'red dustbin.png', iconSize: [32, 32] });
-
-    // Placeholder for marker (starts empty)
-    var binMarker = null;
+   
 
     // Store the last 4 readings
     let readings = [];
