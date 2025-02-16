@@ -1,7 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize Map
-    var map = L.map('map').setView([21.2514, 81.6296], 14);
+    var map = L.map('map').setView([21.127978,81.766441 ], 14);
 
     // Add OpenStreetMap Layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -34,10 +34,10 @@ document.addEventListener("DOMContentLoaded", function () {
         let selectedIcon = greenBinIcon;
 
         if (redCount >= 3) {
-            statusText = "🔴 Bin needs urgent cleaning! (<50%)";
+            statusText = "🔴 Bin needs urgent cleaning! ";
             selectedIcon = redBinIcon;
         } else if (yellowCount >= 3) {
-            statusText = "🟡 Bin needs attention (50-75%)";
+            statusText = "🟡 Bin needs attention ";
             selectedIcon = yellowBinIcon;
         }
 
@@ -47,8 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to Update Marker
     function updateMarker(fillLevel, selectedIcon, statusText) {
-        let binLat = 21.2514;
-        let binLng = 81.6296;
+        let binLat = ;21.127978
+        let binLng = ;81.766441
 
         if (binMarker) {
             binMarker.setLatLng([binLat, binLng])
