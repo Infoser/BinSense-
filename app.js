@@ -11,6 +11,30 @@ document.addEventListener("DOMContentLoaded", function () {
     // Force Map to Render Properly
     setTimeout(() => { map.invalidateSize(); }, 1000);
 
+     const EMAILJS_SERVICE_ID = "service_vyzzy0q";  // Replace with your Service ID
+const EMAILJS_TEMPLATE_ID = "template_b3dacbs";  // Replace with your Template ID
+const EMAILJS_PUBLIC_KEY = "mXkZpR3syO0qWljnV";  // Replace with your Public Key
+
+// Initialize EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+let dustbin = "Dustbin 1"
+let userName = "Senior Manager";
+    let userMessage = `the ${dustbin} has been filled to a high level and needs cleaning`;
+
+    function emailsend(){
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        name: userName,
+        message: userMessage
+    }).then(() => {
+        console.log("email was sent");
+        
+    }).catch(error => {
+        console.error("Error sending email:", error);
+        document.getElementById("statusMessage").textContent = "Error sending email.";
+    });
+}
+;
     // Icons for different fill levels
     var greenBinIcon = L.icon({ iconUrl: 'green dustbin.png', iconSize: [32, 32] });
     var yellowBinIcon = L.icon({ iconUrl: 'yellow dustbin.png', iconSize: [32, 32] });
@@ -24,21 +48,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to Analyze Readings
     function analyzeReadings() {
-        if (readings.length < 4) return; // Ensure at least 4 readings exist
+       if (readings.length < 4) return; // Ensure at least 4 readings exist
 
         let greenCount = readings.filter(value => value <= 50).length;
         let yellowCount = readings.filter(value => value > 50 && value <= 75).length;
         let redCount = readings.filter(value => value > 75).length;
-
+	let flag = 0;
         let statusText = "🟢 Bin is OK"; // Default
         let selectedIcon = greenBinIcon;
-
+        
         if (redCount >= 3) {
-            statusText = "🔴 Bin needs urgent cleaning! ";
+            statusText = "🔴 Bin needs urgent cleaning! (<50%)";
             selectedIcon = redBinIcon;
+            emailsend();
+		flag = flag+1;
         } else if (yellowCount >= 3) {
-            statusText = "🟡 Bin needs attention ";
+            statusText = "🟡 Bin needs attention (50-75%)";
             selectedIcon = yellowBinIcon;
+            flag--;
         }
 
         // Update the marker with the analyzed result
