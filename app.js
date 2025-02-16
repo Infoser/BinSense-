@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let yellowCount = readings.filter(value => value > 50 && value <= 75).length;
         let redCount = readings.filter(value => value > 75).length;
 
-        let statusText = "🟢 Bin is OK (75-100%)"; // Default
+        let statusText = "🟢 Bin is OK"; // Default
         let selectedIcon = greenBinIcon;
 
         if (redCount >= 3) {
