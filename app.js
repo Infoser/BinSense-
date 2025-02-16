@@ -1,7 +1,6 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize Map
-    var map = L.map('map').setView([21.127978,81.766441 ], 14);
+    var map = L.map('map').setView([21.2514, 81.6296], 14);
 
     // Add OpenStreetMap Layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -11,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Force Map to Render Properly
     setTimeout(() => { map.invalidateSize(); }, 1000);
 
-     const EMAILJS_SERVICE_ID = "service_vyzzy0q";  // Replace with your Service ID
+    const EMAILJS_SERVICE_ID = "service_vyzzy0q";  // Replace with your Service ID
 const EMAILJS_TEMPLATE_ID = "template_b3dacbs";  // Replace with your Template ID
 const EMAILJS_PUBLIC_KEY = "mXkZpR3syO0qWljnV";  // Replace with your Public Key
 
@@ -35,6 +34,7 @@ let userName = "Senior Manager";
     });
 }
 ;
+
     // Icons for different fill levels
     var greenBinIcon = L.icon({ iconUrl: 'green dustbin.png', iconSize: [32, 32] });
     var yellowBinIcon = L.icon({ iconUrl: 'yellow dustbin.png', iconSize: [32, 32] });
@@ -48,7 +48,7 @@ let userName = "Senior Manager";
 
     // Function to Analyze Readings
     function analyzeReadings() {
-       if (readings.length < 4) return; // Ensure at least 4 readings exist
+        if (readings.length < 4) return; // Ensure at least 4 readings exist
 
         let greenCount = readings.filter(value => value <= 50).length;
         let yellowCount = readings.filter(value => value > 50 && value <= 75).length;
@@ -74,8 +74,8 @@ let userName = "Senior Manager";
 
     // Function to Update Marker
     function updateMarker(fillLevel, selectedIcon, statusText) {
-        let binLat = ;21.127978
-        let binLng = ;81.766441
+        let binLat = 21.2514;
+        let binLng = 81.6296;
 
         if (binMarker) {
             binMarker.setLatLng([binLat, binLng])
