@@ -1,0 +1,104 @@
+#include <ESP8266WiFi.h>
+#include <ThingSpeak.h>
+
+// WiFi Credentials
+#define WIFI_SSID "Aditi"
+#define WIFI_PASSWORD "adii2004"
+
+// ThingSpeak API
+#define CHANNEL_ID 2832905
+#define API_KEY "NAHQQXA23U3KG9FM"
+
+// Ultrasonic Sensor Pins
+#define TRIG_PIN D5
+#define ECHO_PIN D6
+
+
+#define GREEN_LED_PIN D7
+#define RED_LED_PIN D8
+
+
+WiFiClient client;
+
+void setup() {
+    Serial.begin(115200);
+    delay(100);
+
+    // Initialize sensor pins
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+
+    pinMode(GREEN_LED_PIN, OUTPUT);
+    pinMode(RED_LED_PIN, OUTPUT);
+
+
+    // Connect to WiFi
+    Serial.print("Connecting to WiFi");
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    while (WiFi.status() != WL_CONNECTED) {
+        Serial.print(".");
+        delay(500);
+    }
+    Serial.println("\nConnected to WiFi");
+
+    // Initialize ThingSpeak
+    ThingSpeak.begin(client);
+}
+
+void loop() {
+    float distance = getBinLevel();  // Measure distance
+
+    if (distance == -1) {
+        Serial.println("Sensor Error: No echo received.");
+    } 
+    else 
+    {
+        float binHeight = 30.0;  
+        float fillPercentage = ((binHeight - distance) / binHeight) * 100.0;
+        fillPercentage = constrain(fillPercentage, 0, 100);
+        
+        Serial.print("Distance: ");
+        Serial.print(distance);
+        Serial.print(" cm | Fill Level: ");
+        Serial.print(fillPercentage);
+        Serial.println("%");
+
+        int response = ThingSpeak.writeField(CHANNEL_ID, 1, fillPercentage, API_KEY);
+        if (response == 200) {
+            Serial.println("Data sent to ThingSpeak successfully!");
+        } else {
+            Serial.print("Error sending data: ");
+            Serial.println(response);
+        }
+        if (fillPercentage > 75) {
+        // Dustbin is almost full
+        digitalWrite(RED_LED_PIN, HIGH);  // Turn on red LED
+        digitalWrite(GREEN_LED_PIN, LOW); // Turn off green LED
+    } else {
+        // Dustbin is not full
+        digitalWrite(GREEN_LED_PIN, HIGH); // Turn on green LED
+        digitalWrite(RED_LED_PIN, LOW);    // Turn off red LED
+    }
+    }
+
+    
+    
+    delay(15000);
+}
+
+// Function to measure bin level using Ultrasonic Sensor
+float getBinLevel() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+
+    long duration = pulseIn(ECHO_PIN, HIGH, 60000); // Increased timeout
+    if (duration == 0) {
+        return -1; // Return error value
+    }
+
+    float distance = duration * 0.034 / 2; // Convert time to distance (cm)
+    return distance;
+}
