@@ -7,25 +7,32 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #00ff7f;
             text-align: center;
             padding: 20px;
         }
         h1 {
-            color: #333;
+            color: #ffff;
+            margin-bottom: 30px;
         }
         #alertList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
             list-style: none;
             padding: 0;
-            max-width: 600px;
-            margin: auto;
         }
         .alert-item {
             background: white;
-            padding: 15px;
-            margin: 10px 0;
+            padding: 20px;
+            width: 300px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        .alert-item:hover {
+            transform: translateY(-10px);
         }
         .status {
             font-weight: bold;
@@ -34,6 +41,20 @@
         .full { color: red; }
         .near-full { color: orange; }
         .normal { color: green; }
+        h3 {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .card-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -57,7 +78,7 @@
                 const listItem = document.createElement("li");
                 listItem.className = "alert-item";
                 listItem.innerHTML = `
-                    <h3>Dustbin ${index + 1}</h3>
+                    <div class="card-header">Dustbin ${index + 1}</div>
                     <p><strong>Latitude:</strong> ${dustbin.lat}</p>
                     <p><strong>Longitude:</strong> ${dustbin.lng}</p>
                     <p><strong>Fill Level:</strong> ${dustbin.fillLevel}%</p>
@@ -67,7 +88,7 @@
             });
         }
 
-        // Function to fetch real-time data from logic.js
+        // Function to fetch real-time data from ThingSpeak
         function fetchDustbinData() {
             fetch('https://api.thingspeak.com/channels/2832905/fields/1.json?results=1')
                 .then(response => response.json())
